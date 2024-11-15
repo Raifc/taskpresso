@@ -34,3 +34,6 @@
 
 # Ignore node_modules
 /client/node_modules
+
+# Ignore coverage from simplecov
+/coverage
