@@ -36,6 +36,14 @@ module Api
         head :no_content
       end
 
+      def filter_by_status
+        result = ToDoItems::FilterService.new(filter_params).call
+
+        return render json: result[:data], status: result[:status] if result[:error].blank?
+
+        render json: { error: result[:error] }, status: result[:status]
+      end
+
       private
 
       def set_to_do_item
@@ -44,6 +52,10 @@ module Api
 
       def to_do_item_params
         params.require(:to_do_item).permit(:title, :description, :status, :due_date)
+      end
+
+      def filter_params
+        params.require(:status)
       end
     end
   end
