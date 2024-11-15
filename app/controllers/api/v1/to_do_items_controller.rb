@@ -44,6 +44,15 @@ module Api
         render json: { error: result[:error] }, status: result[:status]
       end
 
+      def complete
+        @to_do_item = ToDoItem.find(params[:id])
+        if @to_do_item.update(status: :complete)
+          render json: @to_do_item
+        else
+          render json: @to_do_item.errors, status: :unprocessable_entity
+        end
+      end
+
       private
 
       def set_to_do_item

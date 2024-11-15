@@ -133,4 +133,25 @@ RSpec.describe 'Api::V1::ToDoItemsController', type: :request do
       end
     end
   end
+
+  describe '#complete' do
+    context 'when the to-do item exists' do
+      it 'changes the status to complete' do
+        to_do_item = create(:to_do_item) 
+        
+        put "/api/v1/to_do_items/#{to_do_item.id}/complete"
+
+        expect(to_do_item.reload.status).to eq('complete')
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context 'when the to-do item does not exist' do
+      it 'returns not found response' do
+        put '/api/v1/to_do_items/-1/complete'
+
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+  end
 end
