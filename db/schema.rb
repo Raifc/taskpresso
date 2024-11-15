@@ -14,12 +14,15 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_15_192029) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_enum "status_enum", ["pending", "complete"]
+
   create_table "to_do_items", force: :cascade do |t|
     t.string "title"
     t.text "description"
-    t.integer "status", default: 0
+    t.enum "status", default: "pending", enum_type: "status_enum"
     t.datetime "due_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["status"], name: "index_to_do_items_on_status"
   end
 end
