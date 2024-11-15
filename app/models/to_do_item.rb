@@ -1,4 +1,4 @@
-# app/models/to_do_item.rb
+# frozen_string_literal: true
 
 class ToDoItem < ApplicationRecord
   enum status: { pending: 0, complete: 1 }
