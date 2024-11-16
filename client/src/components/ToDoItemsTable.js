@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FiTrash, FiCheckCircle, FiEdit, FiEye } from 'react-icons/fi';
-import axios from 'axios';
+import axios from '../api';
 
 const Table = styled.table`
   width: 100%;
@@ -58,6 +58,26 @@ const ToDoItemsTable = () => {
     setFilterStatus(e.target.value);
   };
 
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this to-do item?')) {
+      try {
+        await axios.delete(`api/v1/to_do_items/${id}`);
+        fetchToDoItems();
+      } catch (error) {
+        console.error('Error deleting to-do item:', error);
+      }
+    }
+  };
+
+  const handleComplete = async (id) => {
+    try {
+      await axios.put(`api/v1/to_do_items/${id}/complete`);
+      fetchToDoItems();
+    } catch (error) {
+      console.error('Error completing to-do item:', error);
+    }
+  };
+
   return (
     <div>
       <FilterContainer>
@@ -90,10 +110,10 @@ const ToDoItemsTable = () => {
                 <ActionIcon onClick={() => {}}>
                   <FiEdit size={20} />
                 </ActionIcon>
-                <ActionIcon onClick={() => {}}>
+                <ActionIcon onClick={() => { handleComplete(item.id) }}>
                   <FiCheckCircle size={20} />
                 </ActionIcon>
-                <ActionIcon onClick={() => {}}>
+                <ActionIcon onClick={() => { handleDelete(item.id) }}>
                   <FiTrash size={20} />
                 </ActionIcon>
               </Td>
