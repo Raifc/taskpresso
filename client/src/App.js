@@ -11,6 +11,12 @@ const AppContainer = styled.div`
 const ContentArea = styled.div`
   flex-grow: 1;
   padding: 20px;
+  display: flex;
+  justify-content: center;
+`;
+
+const ContentWrapper = styled.div`
+  width: 90%;
 `;
 
 const App = () => {
@@ -26,11 +32,13 @@ const App = () => {
 
   return (
     <AppContainer>
-        <Sidebar activeItem={activeItem} onItemSelect={handleItemSelect} />
-        <ContentArea>
+      <Sidebar activeItem={activeItem} onItemSelect={handleItemSelect} />
+      <ContentArea>
+        <ContentWrapper>
           {activeItem === 'list' && <ToDoItemsTable />}
           {activeItem === 'create' && <CreateToDoItemForm onItemCreated={handleItemCreated} />}
-        </ContentArea>
+        </ContentWrapper>
+      </ContentArea>
     </AppContainer>
   );
 };
