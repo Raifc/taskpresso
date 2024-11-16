@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { FiTrash, FiCheckCircle, FiEdit, FiEye } from 'react-icons/fi';
 import ViewToDoItemModal from './Modals/ViewToDoItemModal';
 import EditToDoItemModal from './Modals/EditToDoItemModal';
-import axios from 'axios';
+import IconButton from './IconButton';
+import Filter from './Filter';
+import EmptyState from './EmptyState';
+import { useToDoItems } from '../hooks/useToDoItems';
 
 const Container = styled.div`
   width: 100%;
@@ -11,26 +14,28 @@ const Container = styled.div`
 
 const Header = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   margin-bottom: 20px;
+  position: relative;
+`;
+
+const TitleWrapper = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: center;
 `;
 
 const Title = styled.h2`
+  color: #90a043;
+  font-size: 2rem;
+  font-weight: bold;
   margin: 0;
 `;
 
 const FilterContainer = styled.div`
-  display: flex;
-  align-items: center;
-`;
-
-const FilterLabel = styled.label`
-  margin-right: 10px;
-`;
-
-const Select = styled.select`
-  padding: 5px;
+  position: absolute;
+  right: 0;
 `;
 
 const Table = styled.table`
@@ -49,62 +54,16 @@ const Td = styled.td`
   border-bottom: 1px solid #ddd;
 `;
 
-const ActionIcon = styled.span`
-  margin-right: 10px;
-  cursor: pointer;
-  color: #000;
-
-  &:hover {
-    color: #90a043;
-  }
-`;
-
 const ToDoItemsTable = () => {
-  const [toDoItems, setToDoItems] = useState([]);
   const [filterStatus, setFilterStatus] = useState('all');
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [currentItem, setCurrentItem] = useState(null);
 
-  const fetchToDoItems = async () => {
-    try {
-      let url = 'api/v1/to_do_items';
-      if (filterStatus !== 'all') {
-        url = `api/v1/to_do_items/filter_by_status?status=${filterStatus}`;
-      }
-      const response = await axios.get(url);
-      setToDoItems(response.data);
-    } catch (error) {
-      console.error('Error fetching to-do items:', error);
-    }
-  };
-
-  useEffect(() => {
-    fetchToDoItems();
-  }, [filterStatus]);
+  const { toDoItems, loadToDoItems, deleteItem, completeItem, loading, error } = useToDoItems(filterStatus);
 
   const handleFilterChange = (e) => {
     setFilterStatus(e.target.value);
-  };
-
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this to-do item?')) {
-      try {
-        await axios.delete(`api/v1/to_do_items/${id}`);
-        fetchToDoItems();
-      } catch (error) {
-        console.error('Error deleting to-do item:', error);
-      }
-    }
-  };
-
-  const handleComplete = async (id) => {
-    try {
-      await axios.put(`api/v1/to_do_items/${id}/complete`);
-      fetchToDoItems();
-    } catch (error) {
-      console.error('Error completing to-do item:', error);
-    }
   };
 
   const handleEdit = (item) => {
@@ -120,22 +79,19 @@ const ToDoItemsTable = () => {
   return (
     <Container>
       <Header>
-        <Title>To-Do Items</Title>
+        <TitleWrapper>
+          <Title>To-Do Items</Title>
+        </TitleWrapper>
         <FilterContainer>
-          <FilterLabel>Filter by status:</FilterLabel>
-          <Select value={filterStatus} onChange={handleFilterChange}>
-            <option value="all">All</option>
-            <option value="pending">Pending</option>
-            <option value="complete">Complete</option>
-          </Select>
+          <Filter value={filterStatus} onChange={handleFilterChange} />
         </FilterContainer>
       </Header>
-      {toDoItems.length === 0 ? (
-        <p>
-          {filterStatus === 'all'
-            ? 'Start by creating a To-Do Item.'
-            : 'There are no to-do items with the selected status.'}
-        </p>
+
+      {loading && <p>Loading...</p>}
+      {error && <p>Error fetching to-do items</p>}
+
+      {toDoItems.length === 0 && !loading ? (
+        <EmptyState filterStatus={filterStatus} />
       ) : (
         <Table>
           <thead>
@@ -151,24 +107,17 @@ const ToDoItemsTable = () => {
                 <Td>{item.title}</Td>
                 <Td>{item.status}</Td>
                 <Td>
-                  <ActionIcon onClick={() => handleView(item)}>
-                    <FiEye size={20} />
-                  </ActionIcon>
-                  <ActionIcon onClick={() => handleEdit(item)}>
-                    <FiEdit size={20} />
-                  </ActionIcon>
-                  <ActionIcon onClick={() => handleComplete(item.id)}>
-                    <FiCheckCircle size={20} />
-                  </ActionIcon>
-                  <ActionIcon onClick={() => handleDelete(item.id)}>
-                    <FiTrash size={20} />
-                  </ActionIcon>
+                  <IconButton onClick={() => handleView(item)} icon={FiEye} title="Show item" />
+                  <IconButton onClick={() => handleEdit(item)} icon={FiEdit} title="Edit item" />
+                  <IconButton onClick={() => completeItem(item.id)} icon={FiCheckCircle} title="Mark as complete" />
+                  <IconButton onClick={() => deleteItem(item.id)} icon={FiTrash} title="Delete item" />
                 </Td>
               </tr>
             ))}
           </tbody>
         </Table>
       )}
+
       {isViewModalOpen && currentItem && (
         <ViewToDoItemModal
           isOpen={isViewModalOpen}
@@ -181,7 +130,7 @@ const ToDoItemsTable = () => {
           isOpen={isEditModalOpen}
           onRequestClose={() => setIsEditModalOpen(false)}
           item={currentItem}
-          refreshToDoItems={fetchToDoItems}
+          refreshToDoItems={loadToDoItems}
         />
       )}
     </Container>

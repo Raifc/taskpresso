@@ -36,6 +36,7 @@ const Form = styled.form`
 
   button {
     background-color: #90a043;
+    margin-top: 15px;
     color: #fff;
     border: none;
     cursor: pointer;
@@ -72,16 +73,16 @@ const CreateToDoItemForm = ({ onItemCreated }) => {
         <Form onSubmit={handleSubmit}>
           <label>
             Title:
-            <input value={title} onChange={(e) => setTitle(e.target.value)} required />
           </label>
+            <input value={title} onChange={(e) => setTitle(e.target.value)} required />
           <label>
             Description:
-            <textarea value={description} onChange={(e) => setDescription(e.target.value)} />
           </label>
+            <textarea value={description} rows={10} onChange={(e) => setDescription(e.target.value)} />
           <label>
             Due Date:
-            <input type="datetime-local" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
           </label>
+            <input type="datetime-local" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
           <button type="submit">Create To-Do Item</button>
         </Form>
       </FormContainer>
