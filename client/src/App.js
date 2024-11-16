@@ -1,25 +1,46 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import Sidebar from './components/Sidebar';
+import ToDoItemsTable from './components/ToDoItemsTable';
+import CreateToDoItemForm from './components/CreateToDoItemForm';
 
-function App() {
+const AppContainer = styled.div`
+  display: flex;
+`;
+
+const ContentArea = styled.div`
+  flex-grow: 1;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+`;
+
+const ContentWrapper = styled.div`
+  width: 90%;
+`;
+
+const App = () => {
+  const [activeItem, setActiveItem] = useState('list');
+
+  const handleItemSelect = (item) => {
+    setActiveItem(item);
+  };
+
+  const handleItemCreated = () => {
+    setActiveItem('list');
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AppContainer>
+      <Sidebar activeItem={activeItem} onItemSelect={handleItemSelect} />
+      <ContentArea>
+        <ContentWrapper>
+          {activeItem === 'list' && <ToDoItemsTable />}
+          {activeItem === 'create' && <CreateToDoItemForm onItemCreated={handleItemCreated} />}
+        </ContentWrapper>
+      </ContentArea>
+    </AppContainer>
   );
-}
+};
 
 export default App;
