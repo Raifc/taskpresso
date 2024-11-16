@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FiTrash, FiCheckCircle, FiEdit, FiEye } from 'react-icons/fi';
-import axios from '../api';
+import ViewToDoItemModal from './Modals/ViewToDoItemModal';
+import EditToDoItemModal from './Modals/EditToDoItemModal';
+import axios from 'axios';
 
 const Table = styled.table`
   width: 100%;
@@ -78,6 +80,22 @@ const ToDoItemsTable = () => {
     }
   };
 
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [currentItem, setCurrentItem] = useState(null);
+
+  const handleEdit = (item) => {
+    setCurrentItem(item);
+    setIsEditModalOpen(true);
+  };
+
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+
+  const handleView = (item) => {
+    setCurrentItem(item);
+    setIsViewModalOpen(true);
+  };
+
+
   return (
     <div>
       <FilterContainer>
@@ -104,10 +122,10 @@ const ToDoItemsTable = () => {
               <Td>{item.title}</Td>
               <Td>{item.status}</Td>
               <Td>
-                <ActionIcon onClick={() => {}}>
+                <ActionIcon onClick={() => { handleView(item) }}>
                   <FiEye size={20} />
                 </ActionIcon>
-                <ActionIcon onClick={() => {}}>
+                <ActionIcon onClick={() => { handleEdit(item) }}>
                   <FiEdit size={20} />
                 </ActionIcon>
                 <ActionIcon onClick={() => { handleComplete(item.id) }}>
@@ -121,6 +139,23 @@ const ToDoItemsTable = () => {
           ))}
         </tbody>
       </Table>
+
+      {isViewModalOpen && currentItem && (
+        <ViewToDoItemModal
+          isOpen={isViewModalOpen}
+          onRequestClose={() => setIsViewModalOpen(false)}
+          item={currentItem}
+        />
+      )}
+
+      {isEditModalOpen && currentItem && (
+        <EditToDoItemModal
+          isOpen={isEditModalOpen}
+          onRequestClose={() => setIsEditModalOpen(false)}
+          item={currentItem}
+          refreshToDoItems={fetchToDoItems}
+        />
+      )}
     </div>
   );
 };
