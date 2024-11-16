@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import Sidebar from './components/Sidebar';
 import ToDoItemsTable from './components/ToDoItemsTable';
+import CreateToDoItemForm from './components/CreateToDoItemForm';
 
 const AppContainer = styled.div`
   display: flex;
@@ -19,13 +20,17 @@ const App = () => {
     setActiveItem(item);
   };
 
+  const handleItemCreated = () => {
+    setActiveItem('list');
+  };
+
   return (
     <AppContainer>
-      <Sidebar activeItem={activeItem} onItemSelect={handleItemSelect} />
-      <ContentArea>
-        {activeItem === 'list' && <ToDoItemsTable />}
-        {activeItem === 'create' && <p>create to do item</p>}
-      </ContentArea>
+        <Sidebar activeItem={activeItem} onItemSelect={handleItemSelect} />
+        <ContentArea>
+          {activeItem === 'list' && <ToDoItemsTable />}
+          {activeItem === 'create' && <CreateToDoItemForm onItemCreated={handleItemCreated} />}
+        </ContentArea>
     </AppContainer>
   );
 };
