@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Sidebar from './components/Sidebar';
+import ToDoItemsTable from './components/ToDoItemsTable';
 
 const AppContainer = styled.div`
   display: flex;
@@ -22,6 +23,7 @@ const App = () => {
     <AppContainer>
       <Sidebar activeItem={activeItem} onItemSelect={handleItemSelect} />
       <ContentArea>
+        {activeItem === 'list' && <ToDoItemsTable />}
         {activeItem === 'create' && <p>create to do item</p>}
       </ContentArea>
     </AppContainer>
