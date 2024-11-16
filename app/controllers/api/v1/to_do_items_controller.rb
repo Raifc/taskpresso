@@ -3,21 +3,21 @@
 module Api
   module V1
     class ToDoItemsController < ApplicationController
-      before_action :set_to_do_item, only: [:show, :update, :destroy]
+      before_action :set_to_do_item, only: %i[show update destroy complete]
 
       def index
         @to_do_items = ToDoItem.all
-        render json: @to_do_items
+        render json: @to_do_items, each_serializer: ToDoItems::ToDoItemSerializer
       end
 
       def show
-        render json: @to_do_item
+        render json: @to_do_item, serializer: ToDoItems::ToDoItemSerializer
       end
 
       def create
         @to_do_item = ToDoItem.new(to_do_item_params)
         if @to_do_item.save
-          render json: @to_do_item, status: :created
+          render json: @to_do_item, status: :created, serializer: ToDoItems::ToDoItemSerializer
         else
           render json: @to_do_item.errors, status: :unprocessable_entity
         end
@@ -25,7 +25,7 @@ module Api
 
       def update
         if @to_do_item.update(to_do_item_params)
-          render json: @to_do_item
+          render json: @to_do_item, serializer: ToDoItems::ToDoItemSerializer
         else
           render json: @to_do_item.errors, status: :unprocessable_entity
         end
@@ -45,9 +45,8 @@ module Api
       end
 
       def complete
-        @to_do_item = ToDoItem.find(params[:id])
-        if @to_do_item.update(status: :complete)
-          render json: @to_do_item
+        if @to_do_item.update(status: 'complete')
+          render json: @to_do_item, serializer: ToDoItems::ToDoItemSerializer
         else
           render json: @to_do_item.errors, status: :unprocessable_entity
         end
