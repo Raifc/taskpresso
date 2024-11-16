@@ -17,7 +17,7 @@ const NavItem = styled.div`
   background-color: ${(props) => (props.active ? '#90a043' : 'transparent')};
 
   &:hover {
-    background-color: #000;
+    background-color: #6d6d6d;
     color: #fff;
   }
 

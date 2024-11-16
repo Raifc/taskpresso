@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
+import { TitleWrapper, Title, Header } from '../shared/StyledComponents';
 
 const Wrapper = styled.div`
   display: flex;
@@ -70,6 +71,11 @@ const CreateToDoItemForm = ({ onItemCreated }) => {
   return (
     <Wrapper>
       <FormContainer>
+        <Header>
+          <TitleWrapper>
+            <Title>Create To-Do Item</Title>
+          </TitleWrapper>
+        </Header>
         <Form onSubmit={handleSubmit}>
           <label>
             Title:

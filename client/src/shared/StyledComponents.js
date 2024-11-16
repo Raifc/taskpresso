@@ -83,3 +83,24 @@ export const Status = styled.p`
   margin-top: 10px;
   font-weight: bold;
 `;
+
+export const TitleWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+`;
+
+export const Title = styled.h2`
+  color: #90a043;
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 0;
+`;
+
+export const Header = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  position: relative;
+`;

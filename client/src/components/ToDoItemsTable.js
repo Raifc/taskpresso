@@ -7,30 +7,11 @@ import IconButton from './IconButton';
 import Filter from './Filter';
 import EmptyState from './EmptyState';
 import { useToDoItems } from '../hooks/useToDoItems';
+import { TitleWrapper, Title, Header } from '../shared/StyledComponents';
+import LoadingOverlay from './LoadingOverlay';
 
 const Container = styled.div`
   width: 100%;
-`;
-
-const Header = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 20px;
-  position: relative;
-`;
-
-const TitleWrapper = styled.div`
-  flex: 1;
-  display: flex;
-  justify-content: center;
-`;
-
-const Title = styled.h2`
-  color: #90a043;
-  font-size: 2rem;
-  font-weight: bold;
-  margin: 0;
 `;
 
 const FilterContainer = styled.div`
@@ -78,6 +59,7 @@ const ToDoItemsTable = () => {
 
   return (
     <Container>
+      <LoadingOverlay loading={loading} />
       <Header>
         <TitleWrapper>
           <Title>To-Do Items</Title>
