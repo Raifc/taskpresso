@@ -2,6 +2,18 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 
+const Wrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 20px;
+`;
+
+const FormContainer = styled.div`
+  width: 90%; 
+  max-width: 1100px;
+`;
+
 const Form = styled.form`
   display: flex;
   flex-direction: column;
@@ -12,24 +24,24 @@ const Form = styled.form`
 
   input,
   textarea,
-  select {
+  select,
+  button {
     padding: 8px;
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     width: 100%;
+    box-sizing: border-box;
   }
 
   button {
-    padding: 10px;
-    background-color: #28a745;
+    background-color: #90a043;
     color: #fff;
     border: none;
-    border-radius: 4px;
     cursor: pointer;
 
     &:hover {
-      background-color: #218838;
+      background-color: #393f1b;
     }
   }
 `;
@@ -55,21 +67,25 @@ const CreateToDoItemForm = ({ onItemCreated }) => {
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <label>
-        Title:
-        <input value={title} onChange={(e) => setTitle(e.target.value)} required />
-      </label>
-      <label>
-        Description:
-        <textarea value={description} onChange={(e) => setDescription(e.target.value)} />
-      </label>
-      <label>
-        Due Date:
-        <input type="datetime-local" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
-      </label>
-      <button type="submit">Create To-Do Item</button>
-    </Form>
+    <Wrapper>
+      <FormContainer>
+        <Form onSubmit={handleSubmit}>
+          <label>
+            Title:
+            <input value={title} onChange={(e) => setTitle(e.target.value)} required />
+          </label>
+          <label>
+            Description:
+            <textarea value={description} onChange={(e) => setDescription(e.target.value)} />
+          </label>
+          <label>
+            Due Date:
+            <input type="datetime-local" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
+          </label>
+          <button type="submit">Create To-Do Item</button>
+        </Form>
+      </FormContainer>
+    </Wrapper>
   );
 };
 
