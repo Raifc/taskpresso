@@ -5,9 +5,7 @@ setup:
 
 build:
   docker:
-    web: Dockerfile.web
-    client: ./client/Dockerfile
+    web: Dockerfile
 
 run:
-  web: rails server -b 0.0.0.0 -p ${PORT:-3000}
-  client: npm start
+  web: bundle exec rails server -b 0.0.0.0 -p ${PORT:-3000}

@@ -57,8 +57,8 @@ development:
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
-  <<: *default
-  database: taskpresso_test
+ <<: *default
+ database: taskpresso_test
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -82,6 +82,4 @@ test:
 #
 production:
   <<: *default
-  username: <%= ENV.fetch('DATABASE_USERNAME', 'taskpresso') %>
-  password: <%= ENV.fetch('DATABASE_PASSWORD', 'password') %>
-  database: <%= ENV.fetch('DATABASE_NAME',  'taskpresso_production') %>
+  url: <%= ENV['DATABASE_URL'] %>

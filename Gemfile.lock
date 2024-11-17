@@ -124,6 +124,7 @@ GEM
     marcel (1.0.4)
     method_source (1.1.0)
     mini_mime (1.1.5)
+    mini_portile2 (2.8.8)
     minitest (5.25.1)
     msgpack (1.7.5)
     net-imap (0.5.1)
@@ -136,6 +137,9 @@ GEM
     net-smtp (0.5.0)
       net-protocol
     nio4r (2.7.4)
+    nokogiri (1.16.7)
+      mini_portile2 (~> 2.8.2)
+      racc (~> 1.4)
     nokogiri (1.16.7-aarch64-linux)
       racc (~> 1.4)
     nokogiri (1.16.7-arm-linux)
@@ -211,6 +215,7 @@ GEM
     regexp_parser (2.9.2)
     reline (0.5.11)
       io-console (~> 0.5)
+    render_async (2.1.11)
     rspec-core (3.13.2)
       rspec-support (~> 3.13.0)
     rspec-expectations (3.13.3)
@@ -287,6 +292,7 @@ PLATFORMS
   aarch64-linux
   arm-linux
   arm64-darwin
+  ruby
   x86-linux
   x86_64-darwin
   x86_64-linux
@@ -301,6 +307,8 @@ DEPENDENCIES
   puma (>= 5.0)
   rack-cors
   rails (~> 7.2.2)
+  rake
+  render_async
   rspec-rails
   rubocop (~> 1.68)
   rubocop-factory_bot (~> 2.26, >= 2.26.1)
