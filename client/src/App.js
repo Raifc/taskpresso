@@ -1,23 +1,8 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
 import Sidebar from './components/Sidebar';
 import ToDoItemsTable from './components/ToDoItemsTable';
 import CreateToDoItemForm from './components/CreateToDoItemForm';
-
-const AppContainer = styled.div`
-  display: flex;
-`;
-
-const ContentArea = styled.div`
-  flex-grow: 1;
-  padding: 20px;
-  display: flex;
-  justify-content: center;
-`;
-
-const ContentWrapper = styled.div`
-  width: 90%;
-`;
+import { AppContainer, ContentArea, ContentWrapper } from './shared/StyledComponents';
 
 const App = () => {
   const [activeItem, setActiveItem] = useState('list');

@@ -1,52 +1,6 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
 import axios from 'axios';
-import { TitleWrapper, Title, Header } from '../shared/StyledComponents';
-
-const Wrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  margin-top: 20px;
-`;
-
-const FormContainer = styled.div`
-  width: 90%; 
-  max-width: 1100px;
-`;
-
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-
-  label {
-    margin-bottom: 10px;
-  }
-
-  input,
-  textarea,
-  select,
-  button {
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  button {
-    background-color: #90a043;
-    margin-top: 15px;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-
-    &:hover {
-      background-color: #393f1b;
-    }
-  }
-`;
+import { TitleWrapper, Title, Header, Wrapper, FormContainer, Form } from '../shared/StyledComponents';
 
 const CreateToDoItemForm = ({ onItemCreated }) => {
   const [title, setTitle] = useState('');
@@ -77,18 +31,26 @@ const CreateToDoItemForm = ({ onItemCreated }) => {
           </TitleWrapper>
         </Header>
         <Form onSubmit={handleSubmit}>
-          <label>
-            Title:
-          </label>
-            <input value={title} onChange={(e) => setTitle(e.target.value)} required />
-          <label>
-            Description:
-          </label>
-            <textarea value={description} rows={10} onChange={(e) => setDescription(e.target.value)} />
-          <label>
-            Due Date:
-          </label>
-            <input type="datetime-local" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
+          <label>Title:</label>
+          <input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Enter title"
+            required
+          />
+          <label>Description:</label>
+          <textarea
+            value={description}
+            rows={6}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Enter description"
+          />
+          <label>Due Date:</label>
+          <input
+            type="datetime-local"
+            value={dueDate}
+            onChange={(e) => setDueDate(e.target.value)}
+          />
           <button type="submit">Create To-Do Item</button>
         </Form>
       </FormContainer>

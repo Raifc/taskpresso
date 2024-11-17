@@ -1,11 +1,22 @@
 import React from 'react';
 import BaseModal from './BaseModal';
-import { Description, Status } from '../../shared/StyledComponents';
+import { ItemDetails, DetailRow, Label, Value, Divider } from '../../shared/StyledComponents';
 
 const ViewToDoItemModal = ({ isOpen, onRequestClose, item }) => (
   <BaseModal isOpen={isOpen} onRequestClose={onRequestClose} title={item.title}>
-    <Description>{item.description}</Description>
-    <Status>Status: {item.status}</Status>
+    <ItemDetails>
+      <Label>Description</Label>
+      <DetailRow>
+        <Value>{item.description}</Value>
+      </DetailRow>
+    </ItemDetails>
+    <Divider />
+    <ItemDetails>
+      <Label>Status</Label>
+      <DetailRow>
+        <Value>{item.status}</Value>
+      </DetailRow>
+    </ItemDetails>
   </BaseModal>
 );
 

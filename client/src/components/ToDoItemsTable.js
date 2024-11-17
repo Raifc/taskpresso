@@ -1,39 +1,13 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
-import { FiTrash, FiCheckCircle, FiEdit, FiEye } from 'react-icons/fi';
+import { FiTrash, FiCheckCircle, FiEdit, FiEye, FiStar } from 'react-icons/fi';
 import ViewToDoItemModal from './Modals/ViewToDoItemModal';
 import EditToDoItemModal from './Modals/EditToDoItemModal';
-import IconButton from './IconButton';
 import Filter from './Filter';
 import EmptyState from './EmptyState';
 import { useToDoItems } from '../hooks/useToDoItems';
-import { TitleWrapper, Title, Header } from '../shared/StyledComponents';
+import { TitleWrapper, Title, Header, SectionHeader } from '../shared/StyledComponents';
 import LoadingOverlay from './LoadingOverlay';
-
-const Container = styled.div`
-  width: 100%;
-`;
-
-const FilterContainer = styled.div`
-  position: absolute;
-  right: 0;
-`;
-
-const Table = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-`;
-
-const Th = styled.th`
-  text-align: left;
-  padding: 12px;
-  background-color: #f2f2f2;
-`;
-
-const Td = styled.td`
-  padding: 12px;
-  border-bottom: 1px solid #ddd;
-`;
+import { Container, FilterContainer, Table, TitleTh, Tr, Td, Th, TitleTd, ActionContainer, ActionButton, DeleteButton, CompleteButton } from '../shared/StyledComponents';
 
 const ToDoItemsTable = () => {
   const [filterStatus, setFilterStatus] = useState('all');
@@ -57,6 +31,9 @@ const ToDoItemsTable = () => {
     setIsViewModalOpen(true);
   };
 
+  const pendingItems = toDoItems.filter((item) => item.status === 'pending');
+  const completedItems = toDoItems.filter((item) => item.status === 'complete');
+
   return (
     <Container>
       <LoadingOverlay loading={loading} />
@@ -75,29 +52,89 @@ const ToDoItemsTable = () => {
       {toDoItems.length === 0 && !loading ? (
         <EmptyState filterStatus={filterStatus} />
       ) : (
-        <Table>
-          <thead>
-            <tr>
-              <Th>Title</Th>
-              <Th>Status</Th>
-              <Th>Actions</Th>
-            </tr>
-          </thead>
-          <tbody>
-            {toDoItems.map((item) => (
-              <tr key={item.id}>
-                <Td>{item.title}</Td>
-                <Td>{item.status}</Td>
-                <Td>
-                  <IconButton onClick={() => handleView(item)} icon={FiEye} title="Show item" />
-                  <IconButton onClick={() => handleEdit(item)} icon={FiEdit} title="Edit item" />
-                  <IconButton onClick={() => completeItem(item.id)} icon={FiCheckCircle} title="Mark as complete" />
-                  <IconButton onClick={() => deleteItem(item.id)} icon={FiTrash} title="Delete item" />
-                </Td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
+        <>
+          {(filterStatus === 'all' || filterStatus === 'pending') && (
+            <>
+              <SectionHeader>Pending Items</SectionHeader>
+              {pendingItems.length > 0 ? (
+                <Table>
+                  <thead>
+                    <tr>
+                      <TitleTh>Title</TitleTh>
+                      <Th>Status</Th>
+                      <Th>Actions</Th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {pendingItems.map((item) => (
+                      <Tr key={item.id}>
+                        <TitleTd>{item.title}</TitleTd>
+                        <Td>{item.status}</Td>
+                        <Td>
+                          <ActionContainer>
+                            <ActionButton onClick={() => handleView(item)}>
+                              <FiEye />
+                            </ActionButton>
+                            <ActionButton onClick={() => handleEdit(item)}>
+                              <FiEdit />
+                            </ActionButton>
+                            <DeleteButton onClick={() => deleteItem(item.id)}>
+                              <FiTrash />
+                            </DeleteButton>
+                            <CompleteButton onClick={() => completeItem(item.id)}>
+                              <FiCheckCircle /> Complete
+                            </CompleteButton>
+                          </ActionContainer>
+                        </Td>
+                      </Tr>
+                    ))}
+                  </tbody>
+                </Table>
+              ) : (
+                <div style={{ textAlign: 'center', padding: '20px', color: '#90a043' }}>
+                  <FiStar size={48} />
+                  <p style={{ fontSize: '1.2rem', marginTop: '10px' }}>All Done! Congratulations!</p>
+                </div>
+              )}
+            </>
+          )}
+
+          {completedItems.length > 0 && (
+            <>
+              <SectionHeader>Completed Items</SectionHeader>
+              <Table>
+                <thead>
+                  <tr>
+                    <TitleTh>Title</TitleTh>
+                    <Th>Status</Th>
+                    <Th>Actions</Th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {completedItems.map((item) => (
+                    <Tr key={item.id}>
+                      <TitleTd>{item.title}</TitleTd>
+                      <Td>{item.status}</Td>
+                      <Td>
+                        <ActionContainer>
+                          <ActionButton onClick={() => handleView(item)}>
+                            <FiEye />
+                          </ActionButton>
+                          <ActionButton onClick={() => handleEdit(item)}>
+                            <FiEdit />
+                          </ActionButton>
+                          <DeleteButton onClick={() => deleteItem(item.id)}>
+                            <FiTrash />
+                          </DeleteButton>
+                        </ActionContainer>
+                      </Td>
+                    </Tr>
+                  ))}
+                </tbody>
+              </Table>
+            </>
+          )}
+        </>
       )}
 
       {isViewModalOpen && currentItem && (
