@@ -25,15 +25,15 @@ const EditToDoItemModal = ({ isOpen, onRequestClose, item, refreshToDoItems }) =
     <BaseModal isOpen={isOpen} onRequestClose={onRequestClose} title="Edit To-Do Item">
       <form onSubmit={handleSubmit}>
         <Label>
-          Title:
+          Title
         </Label>
           <Input value={title} onChange={(e) => setTitle(e.target.value)} required />
         <Label>
-          Description:
+          Description
         </Label>
           <TextArea value={description} rows={5} onChange={(e) => setDescription(e.target.value)} />
         <Label>
-          Status:
+          Status
         </Label>
           <Select value={status} onChange={(e) => setStatus(e.target.value)}>
             <option value="pending">Pending</option>

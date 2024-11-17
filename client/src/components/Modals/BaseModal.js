@@ -10,9 +10,10 @@ const customStyles = {
     margin: 'auto',
     padding: '0',
     border: 'none',
-    borderRadius: '8px',
+    borderRadius: '12px',
+    maxHeight: '65vh',
     overflow: 'hidden',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19)',
+    boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15), 0 8px 20px rgba(0, 0, 0, 0.1)',
   },
 };
 
