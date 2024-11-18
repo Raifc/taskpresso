@@ -1,22 +1,47 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import { TitleWrapper, Title, Header, Wrapper, FormContainer, Form } from '../shared/StyledComponents';
+import { useMutation } from '@apollo/client';
+import { CREATE_TO_DO_ITEM } from '../graphql/mutations';
+import { GET_TO_DO_ITEMS } from '../graphql/queries';
+import { Wrapper, FormContainer, Header, TitleWrapper, Title, Form, Input, TextArea } from '../shared/StyledComponents';
 
 const CreateToDoItemForm = ({ onItemCreated }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState('');
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post('api/v1/to_do_items', {
-        to_do_item: { title, description, due_date: dueDate, status: 'pending' },
-      });
+  const [createToDoItem] = useMutation(CREATE_TO_DO_ITEM, {
+    update(cache, { data: { createToDoItem } }) {
+      const existingItems = cache.readQuery({ query: GET_TO_DO_ITEMS, variables: { status: null } });
+
+      if (existingItems && createToDoItem) {
+        cache.writeQuery({
+          query: GET_TO_DO_ITEMS,
+          variables: { status: null },
+          data: {
+            filterToDoItemsByStatus: [createToDoItem, ...existingItems.filterToDoItemsByStatus],
+          },
+        });
+      }
+    },
+    onCompleted: () => {
       setTitle('');
       setDescription('');
       setDueDate('');
       onItemCreated();
+    },
+  });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await createToDoItem({
+        variables: {
+          title,
+          description,
+          dueDate: dueDate ? new Date(dueDate).toISOString() : null,
+          status: 'pending',
+        },
+      });
     } catch (error) {
       console.error('Error creating to-do item:', error);
     }
@@ -32,21 +57,22 @@ const CreateToDoItemForm = ({ onItemCreated }) => {
         </Header>
         <Form onSubmit={handleSubmit}>
           <label>Title:</label>
-          <input
+          <Input
+            type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Enter title"
             required
           />
           <label>Description:</label>
-          <textarea
+          <TextArea
             value={description}
             rows={6}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Enter description"
           />
           <label>Due Date:</label>
-          <input
+          <Input
             type="datetime-local"
             value={dueDate}
             onChange={(e) => setDueDate(e.target.value)}

@@ -105,6 +105,7 @@ export const Input = styled.input`
   border-radius: 4px;
   width: 100%;
   box-sizing: border-box;
+  font-family: inherit;
 `;
 
 export const TextArea = styled.textarea`
@@ -115,6 +116,7 @@ export const TextArea = styled.textarea`
   border-radius: 4px;
   width: 100%;
   box-sizing: border-box;
+  font-family: inherit;
 `;
 
 export const Select = styled.select`
