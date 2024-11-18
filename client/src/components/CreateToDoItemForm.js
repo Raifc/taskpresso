@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { CREATE_TO_DO_ITEM } from '../graphql/mutations';
 import { GET_TO_DO_ITEMS } from '../graphql/queries';
-import { Wrapper, FormContainer, Header, TitleWrapper, Title, Form, Input, TextArea } from '../shared/StyledComponents';
+import { Wrapper, FormContainer, Header, TitleWrapper, Title, Form, Input, TextArea, SubmitButton } from '../shared/StyledComponents';
 
 const CreateToDoItemForm = ({ onItemCreated }) => {
   const [title, setTitle] = useState('');
@@ -77,7 +77,7 @@ const CreateToDoItemForm = ({ onItemCreated }) => {
             value={dueDate}
             onChange={(e) => setDueDate(e.target.value)}
           />
-          <button type="submit">Create To-Do Item</button>
+          <SubmitButton type="submit">Create To-Do Item</SubmitButton>
         </Form>
       </FormContainer>
     </Wrapper>

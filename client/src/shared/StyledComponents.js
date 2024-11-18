@@ -28,6 +28,7 @@ export const SubmitButton = styled.button`
   cursor: pointer;
   font-size: 1rem;
   transition: all 0.3s ease-in-out;
+  font-family: inherit;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
   &:hover {
