@@ -2,30 +2,29 @@
 
 module Types
   class QueryType < Types::BaseObject
-    field :node, Types::NodeType, null: true, description: "Fetches an object given its ID." do
-      argument :id, ID, required: true, description: "ID of the object."
+    field :to_do_items, [Types::ToDoItemType], null: false
+    field :to_do_item, Types::ToDoItemType, null: false do
+      argument :id, ID, required: true
+    end
+    field :filter_to_do_items_by_status, [Types::ToDoItemType], null: true do
+      argument :status, String, required: false
     end
 
-    def node(id:)
-      context.schema.object_from_id(id, context)
+    def to_do_items
+      ToDoItem.all
     end
 
-    field :nodes, [Types::NodeType, null: true], null: true, description: "Fetches a list of objects given a list of IDs." do
-      argument :ids, [ID], required: true, description: "IDs of the objects."
+    def to_do_item(id:)
+      ToDoItem.find(id)
+    rescue ActiveRecord::RecordNotFound
+      GraphQL::ExecutionError.new("ToDoItem with id #{id} not found")
     end
 
-    def nodes(ids:)
-      ids.map { |id| context.schema.object_from_id(id, context) }
-    end
+    def filter_to_do_items_by_status(status:)
+      return ToDoItem.all unless status
 
-    # Add root-level fields here.
-    # They will be entry points for queries on your schema.
-
-    # TODO: remove me
-    field :test_field, String, null: false,
-      description: "An example field added by the generator"
-    def test_field
-      "Hello World!"
+      to_do_items = ToDoItems::FilterService.new(status).call[:data]
+      to_do_items.present? ? to_do_items : []
     end
   end
 end
