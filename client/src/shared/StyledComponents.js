@@ -28,6 +28,7 @@ export const SubmitButton = styled.button`
   cursor: pointer;
   font-size: 1rem;
   transition: all 0.3s ease-in-out;
+  font-family: inherit;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
   &:hover {
@@ -105,6 +106,7 @@ export const Input = styled.input`
   border-radius: 4px;
   width: 100%;
   box-sizing: border-box;
+  font-family: inherit;
 `;
 
 export const TextArea = styled.textarea`
@@ -115,6 +117,7 @@ export const TextArea = styled.textarea`
   border-radius: 4px;
   width: 100%;
   box-sizing: border-box;
+  font-family: inherit;
 `;
 
 export const Select = styled.select`

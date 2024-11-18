@@ -6,12 +6,14 @@ import { AppContainer, ContentArea, ContentWrapper } from './shared/StyledCompon
 
 const App = () => {
   const [activeItem, setActiveItem] = useState('list');
+  const [refetchToDoItems, setRefetchToDoItems] = useState(null);
 
   const handleItemSelect = (item) => {
     setActiveItem(item);
   };
 
   const handleItemCreated = () => {
+    if (refetchToDoItems) refetchToDoItems();
     setActiveItem('list');
   };
 
@@ -20,7 +22,9 @@ const App = () => {
       <Sidebar activeItem={activeItem} onItemSelect={handleItemSelect} />
       <ContentArea>
         <ContentWrapper>
-          {activeItem === 'list' && <ToDoItemsTable />}
+          {activeItem === 'list' && (
+            <ToDoItemsTable setRefetchToDoItems={setRefetchToDoItems} />
+          )}
           {activeItem === 'create' && <CreateToDoItemForm onItemCreated={handleItemCreated} />}
         </ContentWrapper>
       </ContentArea>

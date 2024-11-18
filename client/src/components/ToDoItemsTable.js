@@ -1,24 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useQuery, useMutation } from '@apollo/client';
 import { FiTrash, FiCheckCircle, FiEdit, FiEye, FiStar } from 'react-icons/fi';
 import ViewToDoItemModal from './Modals/ViewToDoItemModal';
 import EditToDoItemModal from './Modals/EditToDoItemModal';
 import Filter from './Filter';
 import EmptyState from './EmptyState';
-import { useToDoItems } from '../hooks/useToDoItems';
 import { TitleWrapper, Title, Header, SectionHeader } from '../shared/StyledComponents';
 import LoadingOverlay from './LoadingOverlay';
 import { Container, FilterContainer, Table, TitleTh, Tr, Td, Th, TitleTd, ActionContainer, ActionButton, DeleteButton, CompleteButton } from '../shared/StyledComponents';
+import { GET_TO_DO_ITEMS } from '../graphql/queries';
+import { DELETE_TO_DO_ITEM, COMPLETE_TO_DO_ITEM } from '../graphql/mutations';
 
-const ToDoItemsTable = () => {
+const ToDoItemsTable = ({ setRefetchToDoItems }) => {
   const [filterStatus, setFilterStatus] = useState('all');
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [currentItem, setCurrentItem] = useState(null);
 
-  const { toDoItems, loadToDoItems, deleteItem, completeItem, loading, error } = useToDoItems(filterStatus);
+  const { data, loading, error, refetch } = useQuery(GET_TO_DO_ITEMS, {
+    variables: { status: filterStatus === 'all' ? null : filterStatus },
+  });
+
+  const [deleteToDoItem] = useMutation(DELETE_TO_DO_ITEM, {
+    onCompleted: () => refetch(),
+  });
+
+  const [completeToDoItem] = useMutation(COMPLETE_TO_DO_ITEM, {
+    onCompleted: () => refetch(),
+  });
+
+  useEffect(() => {
+    if (setRefetchToDoItems) {
+      setRefetchToDoItems(() => refetch);
+    }
+  }, [setRefetchToDoItems, refetch]);
 
   const handleFilterChange = (e) => {
     setFilterStatus(e.target.value);
+    refetch();
   };
 
   const handleEdit = (item) => {
@@ -31,12 +50,22 @@ const ToDoItemsTable = () => {
     setIsViewModalOpen(true);
   };
 
-  const pendingItems = toDoItems.filter((item) => item.status === 'pending');
-  const completedItems = toDoItems.filter((item) => item.status === 'complete');
+  const handleDelete = (id) => {
+    deleteToDoItem({ variables: { id } });
+  };
+
+  const handleComplete = (id) => {
+    completeToDoItem({ variables: { id } });
+  };
+
+  if (loading) return <LoadingOverlay loading={true} />;
+  if (error) return <p>Error fetching to-do items</p>;
+
+  const pendingItems = data?.filterToDoItemsByStatus.filter((item) => item.status === 'pending') || [];
+  const completedItems = data?.filterToDoItemsByStatus.filter((item) => item.status === 'complete') || [];
 
   return (
     <Container>
-      <LoadingOverlay loading={loading} />
       <Header>
         <TitleWrapper>
           <Title>To-Do Items</Title>
@@ -46,10 +75,7 @@ const ToDoItemsTable = () => {
         </FilterContainer>
       </Header>
 
-      {loading && <p>Loading...</p>}
-      {error && <p>Error fetching to-do items</p>}
-
-      {toDoItems.length === 0 && !loading ? (
+      {data.filterToDoItemsByStatus.length === 0 && !loading ? (
         <EmptyState filterStatus={filterStatus} />
       ) : (
         <>
@@ -78,10 +104,10 @@ const ToDoItemsTable = () => {
                             <ActionButton onClick={() => handleEdit(item)}>
                               <FiEdit />
                             </ActionButton>
-                            <DeleteButton onClick={() => deleteItem(item.id)}>
+                            <DeleteButton onClick={() => handleDelete(item.id)}>
                               <FiTrash />
                             </DeleteButton>
-                            <CompleteButton onClick={() => completeItem(item.id)}>
+                            <CompleteButton onClick={() => handleComplete(item.id)}>
                               <FiCheckCircle /> Complete
                             </CompleteButton>
                           </ActionContainer>
@@ -123,7 +149,7 @@ const ToDoItemsTable = () => {
                           <ActionButton onClick={() => handleEdit(item)}>
                             <FiEdit />
                           </ActionButton>
-                          <DeleteButton onClick={() => deleteItem(item.id)}>
+                          <DeleteButton onClick={() => handleDelete(item.id)}>
                             <FiTrash />
                           </DeleteButton>
                         </ActionContainer>
@@ -149,7 +175,7 @@ const ToDoItemsTable = () => {
           isOpen={isEditModalOpen}
           onRequestClose={() => setIsEditModalOpen(false)}
           item={currentItem}
-          refreshToDoItems={loadToDoItems}
+          refreshToDoItems={refetch}
         />
       )}
     </Container>
