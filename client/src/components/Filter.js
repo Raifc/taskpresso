@@ -59,7 +59,7 @@ const Filter = ({ value, onChange }) => (
   <FilterContainer>
     <FilterLabel>Filter by status:</FilterLabel>
     <SelectWrapper>
-      <Select value={value} onChange={onChange}>
+      <Select value={value} onChange={onChange} id="filter-select">
         <option value="all">All</option>
         <option value="pending">Pending</option>
         <option value="complete">Complete</option>

@@ -58,21 +58,26 @@ const CreateToDoItemForm = ({ onItemCreated }) => {
         <Form onSubmit={handleSubmit}>
           <label>Title:</label>
           <Input
+            id="todo-title"
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Enter title"
             required
+            data-cy="todo-title-input"
           />
           <label>Description:</label>
           <TextArea
+            id="todo-description"
             value={description}
             rows={6}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Enter description"
+            data-cy="todo-description-input"
           />
           <label>Due Date:</label>
           <Input
+            id="todo-due-date"
             type="datetime-local"
             value={dueDate}
             onChange={(e) => setDueDate(e.target.value)}
