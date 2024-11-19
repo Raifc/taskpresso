@@ -21,7 +21,7 @@ const BaseModal = ({ isOpen, onRequestClose, title, children }) => (
   <Modal isOpen={isOpen} onRequestClose={onRequestClose} style={customStyles}>
     <ModalHeader>
       <h2>{title}</h2>
-      <CloseButton onClick={onRequestClose}>&times;</CloseButton>
+      <CloseButton data-testid="modal-close-button" onClick={onRequestClose}>&times;</CloseButton>
     </ModalHeader>
     <ModalBody>{children}</ModalBody>
   </Modal>

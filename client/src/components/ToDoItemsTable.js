@@ -83,7 +83,7 @@ const ToDoItemsTable = ({ setRefetchToDoItems }) => {
             <>
               <SectionHeader>Pending Items</SectionHeader>
               {pendingItems.length > 0 ? (
-                <Table>
+                <Table id="pending-items-table">
                   <thead>
                     <tr>
                       <TitleTh>Title</TitleTh>
@@ -98,16 +98,16 @@ const ToDoItemsTable = ({ setRefetchToDoItems }) => {
                         <Td>{item.status}</Td>
                         <Td>
                           <ActionContainer>
-                            <ActionButton onClick={() => handleView(item)}>
+                            <ActionButton onClick={() => handleView(item)} id="view-button">
                               <FiEye />
                             </ActionButton>
-                            <ActionButton onClick={() => handleEdit(item)}>
+                            <ActionButton onClick={() => handleEdit(item)} id="edit-button">
                               <FiEdit />
                             </ActionButton>
-                            <DeleteButton onClick={() => handleDelete(item.id)}>
+                            <DeleteButton onClick={() => handleDelete(item.id)} id="delete-button">
                               <FiTrash />
                             </DeleteButton>
-                            <CompleteButton onClick={() => handleComplete(item.id)}>
+                            <CompleteButton onClick={() => handleComplete(item.id)} id="complete-button">
                               <FiCheckCircle /> Complete
                             </CompleteButton>
                           </ActionContainer>
@@ -128,7 +128,7 @@ const ToDoItemsTable = ({ setRefetchToDoItems }) => {
           {completedItems.length > 0 && (
             <>
               <SectionHeader>Completed Items</SectionHeader>
-              <Table>
+              <Table id="completed-items-table">
                 <thead>
                   <tr>
                     <TitleTh>Title</TitleTh>
@@ -143,15 +143,18 @@ const ToDoItemsTable = ({ setRefetchToDoItems }) => {
                       <Td>{item.status}</Td>
                       <Td>
                         <ActionContainer>
-                          <ActionButton onClick={() => handleView(item)}>
+                          <ActionButton onClick={() => handleView(item)} id="view-button">
                             <FiEye />
                           </ActionButton>
-                          <ActionButton onClick={() => handleEdit(item)}>
+                          <ActionButton onClick={() => handleEdit(item)} id="edit-button">
                             <FiEdit />
                           </ActionButton>
-                          <DeleteButton onClick={() => handleDelete(item.id)}>
+                          <DeleteButton onClick={() => handleDelete(item.id)} id="delete-button">
                             <FiTrash />
                           </DeleteButton>
+                          <CompleteButton onClick={() => handleComplete(item.id)} id="complete-button">
+                            <FiCheckCircle /> Complete
+                          </CompleteButton>
                         </ActionContainer>
                       </Td>
                     </Tr>

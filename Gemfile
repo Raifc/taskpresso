@@ -56,6 +56,10 @@ group :development, :test do
   gem 'rubocop-rspec_rails', '~> 2.30'
 end
 
+group :test do
+  gem 'database_cleaner-active_record'
+end
+
 group :development do
   gem 'simplecov', require: false
 end

@@ -37,3 +37,6 @@
 
 # Ignore coverage from simplecov
 /coverage
+
+# Ignore root node_modules
+node_modules

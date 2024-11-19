@@ -1,15 +1,24 @@
 {
-  "name": "meetup_clone_client",
+  "name": "taskpresso",
   "version": "1.0.0",
-  "description": "Build and Deployment Configuration for Meetup Clone's React client",
+  "description": "Build and Deployment Configuration for Taskpresso React client",
   "engines": {
-    "node": "17.9.1"
+    "node": "19.x"
   },
   "scripts": {
-    "clean": "rm -rf public",
-    "build": "npm install --prefix client && npm run build --prefix client",
-    "deploy": "cp -a client/build/. public/",
-    "heroku-postbuild": "npm run clean && npm run build && npm run deploy"
+    "clean": "rm -rf public/*",
+    "install:client": "npm install --prefix client",
+    "build:client": "npm run install:client && npm run build --prefix client",
+    "deploy:prepare": "cp -a client/build/. public/",
+    "heroku-postbuild": "npm run clean && npm run build:client && npm run deploy:prepare",
+    "test:prepare": "npm run test:server:stop && RAILS_ENV=test bundle exec rails db:reset db:prepare && npm install",
+    "test:server:start": "RAILS_ENV=test bundle exec rails s -p 3003 -d --pid tmp/pids/server_test.pid",
+    "test:server:stop": "if [ -f tmp/pids/server_test.pid ] && kill -0 $(cat tmp/pids/server_test.pid) 2>/dev/null; then kill -9 $(cat tmp/pids/server_test.pid) && rm tmp/pids/server_test.pid; fi",
+    "test:run": "npx cypress run",
+    "e2e:tests": "npm run clean && npm run build:client && npm run deploy:prepare && npm run test:prepare && npm run test:server:start && npm run test:run"
   },
-  "author": "RaifCerveny"
+  "author": "RaifCerveny",
+  "devDependencies": {
+    "cypress": "^13.15.2"
+  }
 }

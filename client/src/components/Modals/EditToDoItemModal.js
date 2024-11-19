@@ -23,24 +23,36 @@ const EditToDoItemModal = ({ isOpen, onRequestClose, item, refreshToDoItems }) =
 
   return (
     <BaseModal isOpen={isOpen} onRequestClose={onRequestClose} title="Edit To-Do Item">
-      <form onSubmit={handleSubmit}>
-        <Label>
-          Title
-        </Label>
-          <Input value={title} onChange={(e) => setTitle(e.target.value)} required />
-        <Label>
-          Description
-        </Label>
-          <TextArea value={description} rows={5} onChange={(e) => setDescription(e.target.value)} />
-        <Label>
-          Status
-        </Label>
-          <Select value={status} onChange={(e) => setStatus(e.target.value)}>
-            <option value="pending">Pending</option>
-            <option value="complete">Complete</option>
-          </Select>
+      <form onSubmit={handleSubmit} id="edit-todo-modal">
+        <Label htmlFor="edit-todo-title">Title</Label>
+        <Input
+          id="edit-todo-title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          required
+          data-cy="edit-todo-title-input"
+        />
+  
+        <Label htmlFor="edit-todo-description">Description</Label>
+        <TextArea
+          id="edit-todo-description"
+          value={description}
+          rows={5}
+          onChange={(e) => setDescription(e.target.value)}
+        />
+  
+        <Label htmlFor="edit-todo-status">Status</Label>
+        <Select
+          id="edit-todo-status"
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+        >
+          <option value="pending">Pending</option>
+          <option value="complete">Complete</option>
+        </Select>
+  
         <ButtonContainer>
-          <SubmitButton type="submit">Update</SubmitButton>
+          <SubmitButton type="submit" id="submit-edit">Update</SubmitButton>
         </ButtonContainer>
       </form>
     </BaseModal>
