@@ -1,24 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
-import { FiTrash, FiCheckCircle, FiEdit, FiEye, FiStar } from 'react-icons/fi';
+import { FiTrash, FiCheckCircle, FiEdit, FiEye, FiStar, } from 'react-icons/fi';
 import ViewToDoItemModal from './Modals/ViewToDoItemModal';
 import EditToDoItemModal from './Modals/EditToDoItemModal';
 import Filter from './Filter';
 import EmptyState from './EmptyState';
-import { TitleWrapper, Title, Header, SectionHeader } from '../shared/StyledComponents';
 import LoadingOverlay from './LoadingOverlay';
-import { Container, FilterContainer, Table, TitleTh, Tr, Td, Th, TitleTd, ActionContainer, ActionButton, DeleteButton, CompleteButton } from '../shared/StyledComponents';
+import Pagination from './Pagination';
 import { GET_TO_DO_ITEMS } from '../graphql/queries';
 import { DELETE_TO_DO_ITEM, COMPLETE_TO_DO_ITEM } from '../graphql/mutations';
+import {
+  Container, Header, TitleWrapper, Title, FilterContainer, Table, TitleTh, Tr, Td, Th, TitleTd, ActionContainer, ActionButton, DeleteButton, CompleteButton
+} from '../shared/StyledComponents';
 
 const ToDoItemsTable = ({ setRefetchToDoItems }) => {
   const [filterStatus, setFilterStatus] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const perPage = 10;
+
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [currentItem, setCurrentItem] = useState(null);
 
   const { data, loading, error, refetch } = useQuery(GET_TO_DO_ITEMS, {
-    variables: { status: filterStatus === 'all' ? null : filterStatus },
+    variables: {
+      status: filterStatus === 'all' ? null : filterStatus,
+      page: currentPage,
+      perPage: perPage,
+    },
+    fetchPolicy: 'cache-and-network',
   });
 
   const [deleteToDoItem] = useMutation(DELETE_TO_DO_ITEM, {
@@ -37,7 +47,7 @@ const ToDoItemsTable = ({ setRefetchToDoItems }) => {
 
   const handleFilterChange = (e) => {
     setFilterStatus(e.target.value);
-    refetch();
+    setCurrentPage(1);
   };
 
   const handleEdit = (item) => {
@@ -58,11 +68,35 @@ const ToDoItemsTable = ({ setRefetchToDoItems }) => {
     completeToDoItem({ variables: { id } });
   };
 
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < (data?.filterToDoItemsByStatus.totalPages || 1)) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
   if (loading) return <LoadingOverlay loading={true} />;
   if (error) return <p>Error fetching to-do items</p>;
 
-  const pendingItems = data?.filterToDoItemsByStatus.filter((item) => item.status === 'pending') || [];
-  const completedItems = data?.filterToDoItemsByStatus.filter((item) => item.status === 'complete') || [];
+  const items = data?.filterToDoItemsByStatus.toDoItems || [];
+  const pagination = data?.filterToDoItemsByStatus;
+
+  const noItems = items.length === 0 && !loading;
+
+  const showCongratulations = filterStatus === 'pending' && noItems;
+
+  const showEmptyState = !showCongratulations && noItems;
+
+  const sortedItems = [...items].sort((a, b) => {
+    if (a.status === 'pending' && b.status === 'complete') return -1;
+    if (a.status === 'complete' && b.status === 'pending') return 1;
+    return 0;
+  });
 
   return (
     <Container>
@@ -75,94 +109,59 @@ const ToDoItemsTable = ({ setRefetchToDoItems }) => {
         </FilterContainer>
       </Header>
 
-      {data.filterToDoItemsByStatus.length === 0 && !loading ? (
+      {showCongratulations ? (
+        <div style={{ textAlign: 'center', padding: '20px', color: '#90a043' }}>
+          <FiStar size={48} />
+          <p style={{ fontSize: '1.2rem', marginTop: '10px' }}>
+            All Done! Congratulations!
+          </p>
+        </div>
+      ) : showEmptyState ? (
         <EmptyState filterStatus={filterStatus} />
       ) : (
         <>
-          {(filterStatus === 'all' || filterStatus === 'pending') && (
-            <>
-              <SectionHeader>Pending Items</SectionHeader>
-              {pendingItems.length > 0 ? (
-                <Table id="pending-items-table">
-                  <thead>
-                    <tr>
-                      <TitleTh>Title</TitleTh>
-                      <Th>Status</Th>
-                      <Th>Actions</Th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {pendingItems.map((item) => (
-                      <Tr key={item.id}>
-                        <TitleTd>{item.title}</TitleTd>
-                        <Td>{item.status}</Td>
-                        <Td>
-                          <ActionContainer>
-                            <ActionButton onClick={() => handleView(item)} id="view-button">
-                              <FiEye />
-                            </ActionButton>
-                            <ActionButton onClick={() => handleEdit(item)} id="edit-button">
-                              <FiEdit />
-                            </ActionButton>
-                            <DeleteButton onClick={() => handleDelete(item.id)} id="delete-button">
-                              <FiTrash />
-                            </DeleteButton>
-                            <CompleteButton onClick={() => handleComplete(item.id)} id="complete-button">
-                              <FiCheckCircle /> Complete
-                            </CompleteButton>
-                          </ActionContainer>
-                        </Td>
-                      </Tr>
-                    ))}
-                  </tbody>
-                </Table>
-              ) : (
-                <div style={{ textAlign: 'center', padding: '20px', color: '#90a043' }}>
-                  <FiStar size={48} />
-                  <p style={{ fontSize: '1.2rem', marginTop: '10px' }}>All Done! Congratulations!</p>
-                </div>
-              )}
-            </>
-          )}
+          <Table id="todo-items-table">
+            <thead>
+              <tr>
+                <TitleTh>Title</TitleTh>
+                <Th>Status</Th>
+                <Th>Actions</Th>
+              </tr>
+            </thead>
+            <tbody>
+              {sortedItems.map((item) => (
+                <Tr key={item.id}>
+                  <TitleTd>{item.title}</TitleTd>
+                  <Td>{item.status}</Td>
+                  <Td>
+                    <ActionContainer>
+                      <ActionButton onClick={() => handleView(item)} id="view-button">
+                        <FiEye />
+                      </ActionButton>
+                      <ActionButton onClick={() => handleEdit(item)} id="edit-button">
+                        <FiEdit />
+                      </ActionButton>
+                      <DeleteButton onClick={() => handleDelete(item.id)} id="delete-button">
+                        <FiTrash />
+                      </DeleteButton>
+                      {item.status !== 'complete' && (
+                        <CompleteButton onClick={() => handleComplete(item.id)} id="complete-button">
+                          <FiCheckCircle /> Complete
+                        </CompleteButton>
+                      )}
+                    </ActionContainer>
+                  </Td>
+                </Tr>
+              ))}
+            </tbody>
+          </Table>
 
-          {completedItems.length > 0 && (
-            <>
-              <SectionHeader>Completed Items</SectionHeader>
-              <Table id="completed-items-table">
-                <thead>
-                  <tr>
-                    <TitleTh>Title</TitleTh>
-                    <Th>Status</Th>
-                    <Th>Actions</Th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {completedItems.map((item) => (
-                    <Tr key={item.id}>
-                      <TitleTd>{item.title}</TitleTd>
-                      <Td>{item.status}</Td>
-                      <Td>
-                        <ActionContainer>
-                          <ActionButton onClick={() => handleView(item)} id="view-button">
-                            <FiEye />
-                          </ActionButton>
-                          <ActionButton onClick={() => handleEdit(item)} id="edit-button">
-                            <FiEdit />
-                          </ActionButton>
-                          <DeleteButton onClick={() => handleDelete(item.id)} id="delete-button">
-                            <FiTrash />
-                          </DeleteButton>
-                          <CompleteButton onClick={() => handleComplete(item.id)} id="complete-button">
-                            <FiCheckCircle /> Complete
-                          </CompleteButton>
-                        </ActionContainer>
-                      </Td>
-                    </Tr>
-                  ))}
-                </tbody>
-              </Table>
-            </>
-          )}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={pagination?.totalPages || 1}
+            onPrevious={handlePreviousPage}
+            onNext={handleNextPage}
+          />
         </>
       )}
 

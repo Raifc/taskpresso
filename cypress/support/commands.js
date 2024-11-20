@@ -23,13 +23,14 @@ Cypress.Commands.add('completeToDoItem', (title) => {
     });
   cy.contains(title)
     .closest('tr')
-    .should('contain', 'Complete');
+    .find('td')
+    .contains('complete');
 });
 
 Cypress.Commands.add('verifyCompletedStatus', (title) => {
   cy.get('select').select('Complete');
   cy.contains(title).should('be.visible');
-  cy.get('#completed-items-table').should('contain', title);
+  cy.get('#todo-items-table').should('contain', title);
 });
 
 Cypress.Commands.add('deleteToDoItem', (title) => {
