@@ -34,7 +34,7 @@ taskpresso/
  - Docker and Docker Compose
 
 ## Getting Started
-To get Taskpresso running locally, ensure you have Docker and Docker Compose installed. To run without Docker, see the `docs/running_without_docker.md` doc.
+To get Taskpresso running locally, ensure you have Docker and Docker Compose installed. To run without Docker, see the [Running without Docker](docs/running_without_docker.md) doc.
 
 ## Development Setup
 1. Clone this repository.
