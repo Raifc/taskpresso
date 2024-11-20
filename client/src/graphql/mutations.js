@@ -1,13 +1,12 @@
 import { gql } from '@apollo/client';
 
 export const CREATE_TO_DO_ITEM = gql`
-  mutation CreateToDoItem($title: String!, $description: String, $status: String, $dueDate: ISO8601DateTime) {
-    createToDoItem(input: { title: $title, description: $description, status: $status, dueDate: $dueDate }) {
+  mutation CreateToDoItem($title: String!, $description: String, $status: String) {
+    createToDoItem(input: { title: $title, description: $description, status: $status }) {
       id
       title
       description
       status
-      dueDate
       createdAt
       updatedAt
     }

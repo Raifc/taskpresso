@@ -6,8 +6,8 @@ module Api
       before_action :set_to_do_item, only: %i[show update destroy complete]
 
       def index
-        @to_do_items = ToDoItem.all
-        render json: @to_do_items, each_serializer: ToDoItems::ToDoItemSerializer
+        @to_do_items = ToDoItems::PaginationService.paginate(ToDoItem.all, params)
+        render_paginated_items(@to_do_items)
       end
 
       def show
@@ -39,9 +39,12 @@ module Api
       def filter_by_status
         result = ToDoItems::FilterService.new(filter_params).call
 
-        return render json: result[:data], status: result[:status] if result[:error].blank?
-
-        render json: { error: result[:error] }, status: result[:status]
+        if result[:error].blank?
+          @filtered_items = ToDoItems::PaginationService.paginate(result[:data], params)
+          render_paginated_items(@filtered_items)
+        else
+          render json: { error: result[:error] }, status: result[:status]
+        end
       end
 
       def complete
@@ -64,6 +67,16 @@ module Api
 
       def filter_params
         params.require(:status)
+      end
+
+      def render_paginated_items(items)
+        render json: {
+          to_do_items: ActiveModelSerializers::SerializableResource.new(
+            items,
+            each_serializer: ToDoItems::ToDoItemSerializer
+          ),
+          meta: ToDoItems::PaginationService.meta(items)
+        }
       end
     end
   end

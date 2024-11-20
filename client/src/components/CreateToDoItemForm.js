@@ -7,7 +7,6 @@ import { Wrapper, FormContainer, Header, TitleWrapper, Title, Form, Input, TextA
 const CreateToDoItemForm = ({ onItemCreated }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [dueDate, setDueDate] = useState('');
 
   const [createToDoItem] = useMutation(CREATE_TO_DO_ITEM, {
     update(cache, { data: { createToDoItem } }) {
@@ -26,7 +25,6 @@ const CreateToDoItemForm = ({ onItemCreated }) => {
     onCompleted: () => {
       setTitle('');
       setDescription('');
-      setDueDate('');
       onItemCreated();
     },
   });
@@ -38,7 +36,6 @@ const CreateToDoItemForm = ({ onItemCreated }) => {
         variables: {
           title,
           description,
-          dueDate: dueDate ? new Date(dueDate).toISOString() : null,
           status: 'pending',
         },
       });
@@ -74,13 +71,6 @@ const CreateToDoItemForm = ({ onItemCreated }) => {
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Enter description"
             data-cy="todo-description-input"
-          />
-          <label>Due Date:</label>
-          <Input
-            id="todo-due-date"
-            type="datetime-local"
-            value={dueDate}
-            onChange={(e) => setDueDate(e.target.value)}
           />
           <SubmitButton type="submit">Create To-Do Item</SubmitButton>
         </Form>

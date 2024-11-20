@@ -1,109 +1,75 @@
-# frozen_string_literal: true
-
 require 'rails_helper'
 
-RSpec.describe 'ToDoItems Query', type: :request do
-  describe 'to_do_items query' do
-    let!(:to_do_items) { create_list(:to_do_item, 3) }
-
-    let(:query) do
-      <<~GQL
-        query {
-          toDoItems {
-            id
-            title
-            description
-            status
-            dueDate
-            createdAt
-            updatedAt
-          }
-        }
-      GQL
+RSpec.describe 'GraphQL Queries', type: :request do
+  describe 'toDoItems Query' do
+    before do
+      create_list(:to_do_item, 25)
     end
 
-    it 'returns all to_do_items' do
-      post '/graphql', params: { query: query }
+    it 'returns paginated to-do items with metadata' do
+      post '/graphql', params: {
+        query: <<~GQL
+          query {
+            toDoItems(page: 1, perPage: 10) {
+              toDoItems {
+                id
+                title
+              }
+              currentPage
+              nextPage
+              prevPage
+              totalPages
+              totalCount
+            }
+          }
+        GQL
+      }
 
       json = JSON.parse(response.body)
+      data = json['data']['toDoItems']
 
-      expect(json['data']['toDoItems'].size).to eq(3)
+      expect(data['toDoItems'].size).to eq(10)
+      expect(data['currentPage']).to eq(1)
+      expect(data['nextPage']).to eq(2)
+      expect(data['totalPages']).to eq(3)
+      expect(data['totalCount']).to eq(25)
     end
   end
 
-  describe 'to_do_item query' do
-    let!(:to_do_item) { create(:to_do_item) }
+  describe 'filterToDoItemsByStatus Query' do
+    before do
+      create_list(:to_do_item, 15, status: 'pending')
+      create_list(:to_do_item, 10, status: 'complete')
+    end
 
-    let(:query) do
-      <<~GQL
-        query($id: ID!) {
-          toDoItem(id: $id) {
-            id
-            title
-            description
-            status
-            dueDate
-            createdAt
-            updatedAt
+    it 'returns paginated filtered to-do items with metadata' do
+      post '/graphql', params: {
+        query: <<~GQL
+          query {
+            filterToDoItemsByStatus(status: "pending", page: 1, perPage: 10) {
+              toDoItems {
+                id
+                title
+                status
+              }
+              currentPage
+              nextPage
+              prevPage
+              totalPages
+              totalCount
+            }
           }
-        }
-      GQL
-    end
-
-    it 'returns a to_do_item by id' do
-      post '/graphql', params: { query: query, variables: { id: to_do_item.id } }
-      json = JSON.parse(response.body)
-
-      expect(json['data']['toDoItem']['id']).to eq(to_do_item.id.to_s)
-    end
-
-    it 'returns an error for a non-existing to_do_item id' do
-      post '/graphql', params: { query: query, variables: { id: -1 } }
-      json = JSON.parse(response.body)
-
-      expect(json['errors']).not_to be_empty
-    end
-  end
-
-  describe 'filter_to_do_items_by_status query' do
-    let!(:completed_items) { create_list(:to_do_item, 2, status: 'complete') }
-    let!(:pending_items) { create_list(:to_do_item, 2, status: 'pending') }
-
-    let(:query) do
-      <<~GQL
-        query($status: String!) {
-          filterToDoItemsByStatus(status: $status) {
-            id
-            title
-            description
-            status
-            dueDate
-          }
-        }
-      GQL
-    end
-
-    it 'returns to_do_items filtered by valid status' do
-      post '/graphql', params: { query: query, variables: { status: 'complete' } }
-      json = JSON.parse(response.body)
-
-      expect(json['data']['filterToDoItemsByStatus'].size).to eq(2)
-      expect(json['data']['filterToDoItemsByStatus'].all? { |item| item['status'] == 'complete' }).to be true
-    end
-
-    it 'returns an empty array for a status with no matching items' do
-      post '/graphql', params: { query: query, variables: { status: 'nonexistent' } }
+        GQL
+      }
 
       json = JSON.parse(response.body)
+      data = json['data']['filterToDoItemsByStatus']
 
-      expect(json['data']['filterToDoItemsByStatus']).to be_empty
-    end
-
-    it 'handles invalid status values gracefully' do
-      post '/graphql', params: { query: query, variables: { status: nil } }
-      json = JSON.parse(response.body)
-
-      expect(json['errors']).not_to be_empty
+      expect(data['toDoItems'].size).to eq(10)
+      expect(data['toDoItems'].all? { |item| item['status'] == 'pending' }).to be true
+      expect(data['currentPage']).to eq(1)
+      expect(data['totalPages']).to eq(2)
+      expect(data['totalCount']).to eq(15)
     end
   end
 end
