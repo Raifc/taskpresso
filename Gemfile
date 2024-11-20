@@ -8,6 +8,8 @@ gem 'active_model_serializers'
 
 gem 'graphql'
 
+gem 'kaminari'
+
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem 'rails', '~> 7.2.2'
 

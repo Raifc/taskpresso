@@ -3,23 +3,40 @@
 require 'rails_helper'
 
 RSpec.describe 'Api::V1::ToDoItemsController', type: :request do
-  let!(:to_do_item) { create(:to_do_item) }
   let(:valid_attributes) { { title: 'New Task', description: 'Task description', status: 'pending', due_date: Date.tomorrow } }
   let(:invalid_attributes) { { title: nil } }
 
   describe '#index' do
-    it 'returns all to-do items' do
-      get '/api/v1/to_do_items'
+    before do
+      create_list(:to_do_item, 25)
+    end
+
+    it 'returns paginated to-do items' do
+      get '/api/v1/to_do_items', params: { page: 1, per_page: 10 }
 
       expect(response).to be_successful
-      items = JSON.parse(response.body)
+      response_body = JSON.parse(response.body)
 
-      expect(items.size).to eq(ToDoItem.count)
+      expect(response_body['to_do_items'].size).to eq(10)
+      expect(response_body['meta']['total_count']).to eq(25)
+      expect(response_body['meta']['total_pages']).to eq(3)
+    end
+
+    it 'returns the second page of to-do items' do
+      get '/api/v1/to_do_items', params: { page: 2, per_page: 10 }
+
+      expect(response).to be_successful
+      response_body = JSON.parse(response.body)
+
+      expect(response_body['to_do_items'].size).to eq(10)
+      expect(response_body['meta']['current_page']).to eq(2)
     end
   end
 
   describe '#show' do
     context 'when the to-do item exists' do
+      let!(:to_do_item) { create(:to_do_item) }
+
       it 'returns the to-do item' do
         get "/api/v1/to_do_items/#{to_do_item.id}"
 
@@ -62,6 +79,8 @@ RSpec.describe 'Api::V1::ToDoItemsController', type: :request do
   end
 
   describe '#update' do
+    let!(:to_do_item) { create(:to_do_item) }
+
     context 'with valid parameters' do
       it 'updates the to-do item and returns a successful response' do
         put "/api/v1/to_do_items/#{to_do_item.id}", params: { to_do_item: { title: 'Updated Task' } }
@@ -83,6 +102,8 @@ RSpec.describe 'Api::V1::ToDoItemsController', type: :request do
   end
 
   describe '#destroy' do
+    let!(:to_do_item) { create(:to_do_item) }
+
     it 'deletes the to-do item and returns a no content status' do
       expect {
         delete "/api/v1/to_do_items/#{to_do_item.id}"
@@ -93,24 +114,31 @@ RSpec.describe 'Api::V1::ToDoItemsController', type: :request do
   end
 
   describe '#filter_by_status' do
+    before do
+      create_list(:to_do_item, 15, status: 'pending')
+      create_list(:to_do_item, 10, status: 'complete')
+    end
+
     context 'with a valid status parameter' do
-      it 'returns to-do items with the specified status' do
-        get '/api/v1/to_do_items/filter_by_status', params: { status: 'pending' }
+      it 'returns paginated to-do items with the specified status' do
+        get '/api/v1/to_do_items/filter_by_status', params: { status: 'pending', page: 1, per_page: 10 }
 
         expect(response).to be_successful
-        items = JSON.parse(response.body)
+        response_body = JSON.parse(response.body)
 
-        expect(items.size).to eq(1)
-        expect(items.first['status']).to eq('pending')
+        expect(response_body['to_do_items'].size).to eq(10)
+        expect(response_body['meta']['total_count']).to eq(15)
+        expect(response_body['meta']['total_pages']).to eq(2)
       end
 
-      it 'returns an empty array if no items match the status' do
-        get '/api/v1/to_do_items/filter_by_status', params: { status: 'complete' }
+      it 'returns the second page of pending to-do items' do
+        get '/api/v1/to_do_items/filter_by_status', params: { status: 'pending', page: 2, per_page: 10 }
 
         expect(response).to be_successful
-        items = JSON.parse(response.body)
+        response_body = JSON.parse(response.body)
 
-        expect(items).to be_empty
+        expect(response_body['to_do_items'].size).to eq(5)
+        expect(response_body['meta']['current_page']).to eq(2)
       end
     end
 
