@@ -10,6 +10,7 @@ puts 'Seeding ToDoItems...'
 if ENV['RAILS_ENV'] != 'test'
   15.times do
     FactoryBot.create(:to_do_item)
+    FactoryBot.create(:to_do_item, :complete)
   end
 end
 

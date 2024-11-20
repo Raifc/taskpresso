@@ -6,5 +6,9 @@ FactoryBot.define do
     description { Faker::Lorem.paragraph(sentence_count: 2) }
     status { :pending }
     due_date { Date.tomorrow }
+
+    trait :complete do
+      status { :complete }
+    end
   end
 end
