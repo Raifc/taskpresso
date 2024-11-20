@@ -6,6 +6,8 @@ ruby '3.2.2'
 
 gem 'active_model_serializers'
 
+gem 'faker'
+
 gem 'graphql'
 
 gem 'kaminari'
