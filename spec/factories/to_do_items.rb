@@ -2,8 +2,8 @@
 
 FactoryBot.define do
   factory :to_do_item do
-    title { 'Buy groceries' }
-    description { 'Milk, eggs' }
+    title { Faker::Lorem.sentence(word_count: 2) }
+    description { Faker::Lorem.paragraph(sentence_count: 2) }
     status { :pending }
     due_date { Date.tomorrow }
   end
