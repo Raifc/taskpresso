@@ -2,7 +2,6 @@ import React from 'react';
 import { FiPlus, FiList } from 'react-icons/fi';
 import {SidebarContainer, NavItem } from '../styles/Sidebar.styles';
 
-
 const Sidebar = ({ activeItem, onItemSelect }) => {
   return (
     <SidebarContainer>

@@ -9,7 +9,7 @@ import LoadingOverlay from './LoadingOverlay';
 import Pagination from './Pagination';
 import { GET_TO_DO_ITEMS } from '../graphql/queries';
 import { DELETE_TO_DO_ITEM, COMPLETE_TO_DO_ITEM } from '../graphql/mutations';
-import {Container, FilterContainer, Table, Th, Td, Tr, TitleTh, TitleTd, ActionContainer, CompleteButton, DeleteButton, ActionButton } from '../styles/ToDoItemsTable.styles'
+import { Container, FilterContainer, Table, Th, Td, Tr, TitleTh, TitleTd, ActionContainer, CompleteButton, DeleteButton, ActionButton } from '../styles/ToDoItemsTable.styles'
 import { Header, TitleWrapper, Title } from '../styles/sharedStyles';
 const ToDoItemsTable = ({ setRefetchToDoItems }) => {
   const [filterStatus, setFilterStatus] = useState('all');
