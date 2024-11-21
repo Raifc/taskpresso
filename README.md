@@ -1,8 +1,7 @@
 # Taskpresso
-Taskpresso is a Rails/React monorepo that serves as a to-do application. The backend API, built with Rails, and includes both REST and GraphQL endpoints. The frontend is a React application located in the `client/` directory, built as static files and served by Rails.
+Taskpresso is a Rails/React monorepo that serves as a to-do application. The backend API, built with Rails, and includes both REST and GraphQL endpoints. The frontend is a React application located in the `client/` directory.
 
 ## Technology Stack
-
 - **Backend**: Rails 7.2.5, Ruby 3.2.2
 - **Frontend**: React (inside the `client/` directory)
 - **Containerization**: Docker, docker-compose
@@ -41,29 +40,25 @@ To get Taskpresso running locally, ensure you have Docker and Docker Compose ins
 
 1. Navigate to the root directory of the repository.
 
-3. Run the following command to build and start the application:
-
+2. Install Dependencies for the Client Service (important for the React frontend): Run the following command to ensure all Node.js dependencies are installed:
 ```bash
-docker-compose up --build
+docker-compose run --rm client npm install
+```
+
+3. Prepare the Database (for the Rails API): Run the following commands to create and seed the database:
+```bash
+docker-compose run --rm api rails db:create db:migrate db:seed
+```
+
+4. Run the following command to build and start the application:
+```bash
+docker-compose up
 ```
 This command will start the React Server on the port 3000 and Rails server on the port 3001. 
 
-## Database Setup
-The Rails API uses PostgreSQL. Migrations will run automatically when the application is started in Docker. However, if you need to run them manually, use the following command:
-
-```bash
-docker-compose exec api bash -c "rails db:create db:migrate"
-```
-
-You can also seed initial data by running:
-
-```bash
-docker-compose exec api bash -c "rails db:seed"
-```
-
 ## Running Tests
 ### RSpec tests
-To run the RSpec tests for the Rails API:
+With the container up, run the RSpec tests for the Rails API:
 
 ```bash
 docker-compose exec api bash -c "RAILS_ENV=test rspec"
@@ -73,6 +68,7 @@ docker-compose exec api bash -c "RAILS_ENV=test rspec"
 To run the end-to-end (E2E) Cypress tests, please ensure you have the following prerequisites installed:
 
 - Node.js 19.x
+- Ruby 3.2.2
 - Rails 7.2.5
 
 **Steps**
@@ -85,16 +81,33 @@ docker-compose down
 
 2. Start the Database:
 Start only the database service with Docker:
-
 ```bash
 docker-compose up db
 ```
 
-3. Run Cypress Tests:
+3. Install Bundler
+Install Bundler to manage Ruby gem dependencies:
+```bash
+gem install bundler
+```
+
+4. Install Ruby Gems
+Navigate to the project's root directory and install the required gems:
+```bash
+bundle install
+```
+
+5. Run Cypress Tests:
 In a new terminal window, run the Cypress tests with the following command:
 
 ```bash
 npm run e2e:tests
+```
+
+### Troubleshooting: 
+Access-Related Issues (File Permissions): If you encounter access-related issues (e.g., permission denied errors) using Linux, this might be due to file or directory ownership in the Docker environment. Resolve it by adjusting ownership using the following command inside the project's directory:
+```bash
+sudo chown -R $USER:$USER .
 ```
 
 ## Additional Commands
