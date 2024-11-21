@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import BaseModal from './BaseModal';
-import { Label, Input, TextArea, Select, ButtonContainer, SubmitButton } from '../../shared/StyledComponents';
+import { Select, ButtonContainer } from '../../styles/EditToDoItemModal.styles'
+import { Label, Input, TextArea, SubmitButton } from '../../styles/sharedStyles';
 
 const EditToDoItemModal = ({ isOpen, onRequestClose, item, refreshToDoItems }) => {
   const [title, setTitle] = useState(item.title);

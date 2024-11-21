@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { CREATE_TO_DO_ITEM } from '../graphql/mutations';
 import { GET_TO_DO_ITEMS } from '../graphql/queries';
-import { Wrapper, FormContainer, Header, TitleWrapper, Title, Form, Input, TextArea, SubmitButton } from '../shared/StyledComponents';
+import { Wrapper, FormContainer, Form } from '../styles/CreateToDoItemForm.styles'
+import { Input, TextArea, SubmitButton, Header, TitleWrapper, Title } from '../styles/sharedStyles';
 
 const CreateToDoItemForm = ({ onItemCreated }) => {
   const [title, setTitle] = useState('');

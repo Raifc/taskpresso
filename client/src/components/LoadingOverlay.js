@@ -1,19 +1,6 @@
 import React from 'react';
-import styled from 'styled-components';
 import { ClipLoader } from 'react-spinners';
-
-const Overlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-`;
+import { Overlay } from '../styles/LoadingOverlay.styles';
 
 const LoadingOverlay = ({ loading }) => (
   loading ? (

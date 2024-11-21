@@ -1,6 +1,6 @@
 import React from 'react';
 import Modal from 'react-modal';
-import { ModalHeader, CloseButton, ModalBody } from '../../shared/StyledComponents';
+import { ModalHeader, ModalBody, CloseButton } from '../../styles/BaseModal.styles';
 
 Modal.setAppElement('#root');
 
