@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-  PaginationContainer,
-  PaginationButton,
-  PageInfo,
-} from '../shared/StyledComponents';
+import { PaginationContainer, PaginationButton, PageInfo } from '../styles/Pagination.styles';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 
 const Pagination = ({ currentPage, totalPages, onPrevious, onNext }) => {

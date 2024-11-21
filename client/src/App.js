@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Sidebar from './components/Sidebar';
 import ToDoItemsTable from './components/ToDoItemsTable';
 import CreateToDoItemForm from './components/CreateToDoItemForm';
-import { AppContainer, ContentArea, ContentWrapper } from './shared/StyledComponents';
+import { AppContainer, ContentArea, ContentWrapper } from './styles/App.styles';
 
 const App = () => {
   const [activeItem, setActiveItem] = useState('list');
